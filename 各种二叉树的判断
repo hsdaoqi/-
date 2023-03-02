@@ -1,0 +1,133 @@
+//以递归的方式判断是否为搜索二叉树
+int prev = INT_MIN;//用一个全局变量来记录上一个节点
+bool judgeBST(Tree* root) {
+	if (root == NULL) {
+		return true;
+	}
+	bool leftBfs = judgeBST(root->left);
+	if (!leftBfs) {//如果左树为false，返回false；
+		return false;
+	}
+	if (root->val <= prev) {
+		return false;
+	}
+	else {
+		prev = root->val;
+	}
+	return judgeBST(root->right);
+}
+
+
+
+//已非递归的方法判断是否为搜索二叉树
+bool judgeBST2(Tree* root) {
+	if (root == NULL) {
+		return;
+	}
+	int prevval = INT_MIN;
+	stack<Tree*> st;
+	while (!st.empty() || root) {
+		if (root != NULL) {
+			st.push(root);
+			root = root->left;
+		}
+		else {
+			root = st.top();
+			st.pop();
+			if (root->val <= prevval) {
+				return false;
+			}
+			else {
+				prevval = root->val;
+			}
+			root = root->right;
+		}
+	}
+	return true;
+}
+
+
+//判断是否为完全二叉树
+bool checkCBT(Tree* root) {
+	if (root == NULL) {
+		return true;
+	}
+	queue<Tree*> qu;
+	qu.push(root);
+	bool leaf = false;
+	while (!qu.empty()) {
+		Tree* head = qu.front();
+		qu.pop();
+		if ((leaf && (head->left || head->right)) || (head->left == NULL && head->right != NULL)) {
+			return false;
+		}
+		if (head->left) {//先左再右
+			qu.push(head->left);
+		}
+		if (head->right) {
+			qu.push(head->right);
+		}
+		if (head->left==NULL || head->right == NULL) {
+			leaf = true;
+		}
+	}
+	return true;
+}
+
+
+//如何判断是否为平衡二叉树
+bool isBalance(Tree* root) {//主函数
+	return process(root).isBalanced;
+}
+
+class ReturnType1{
+public:
+	bool isBalanced;
+	int heigh;
+	ReturnType1(bool is, int he) {
+		isBalanced = is;
+		heigh = he;
+	}
+};
+
+ReturnType1 process(Tree* root) {
+	if (root == NULL) {
+		return { true,0 };
+	}
+	ReturnType1 LeftData= process(root->left);
+	ReturnType1 rightData=process(root->right);
+	int heigh = max(LeftData.heigh, rightData.heigh) + 1;
+	bool isBalance = LeftData.isBalanced && rightData.isBalanced && (abs(LeftData.heigh - rightData.heigh) < 2);
+	return { isBalance,heigh };
+}
+
+
+
+
+
+//如何判断是否为满二叉树
+bool isFull(Tree* root) {//主函数
+	if (root == NULL) {
+		return true;
+	}
+	return process2(root).nodes == ((1 << process2(root).heigh) - 1);
+}
+class ReturnType2 {
+public:
+	int nodes;//记录节点数
+	int heigh;//记录高度
+	ReturnType2(int is, int he) {
+		nodes = is;
+		heigh = he;
+	}
+};
+ReturnType2 process2(Tree* root) {
+	if (root == NULL) {
+		return { 0,0 };
+	}
+	ReturnType2 leftData = process2(root->left);
+	ReturnType2 rightData = process2(root->right);
+	int heigh = max(leftData.heigh, rightData.heigh) + 1;
+	int node = leftData.nodes + rightData.nodes + 1;
+	return { heigh,node };
+}
