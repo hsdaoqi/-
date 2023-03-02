@@ -1,0 +1,146 @@
+struct Tree {
+	int val;
+	Tree* left;
+	Tree* right;
+};
+
+//树的递归遍历
+void dfs(Tree* root) {
+	if (root == NULL) {
+		return;
+	}
+	//cout << root->val << " ";//也可以是其他操作,先序遍历
+	dfs(root->left);
+	//cout << root->val << " ";//也可以是其他操作,中序遍历
+	dfs(root->right);
+	//cout << root->val << " ";//也可以是其他操作,后序遍历
+}
+
+
+//树的迭代遍历
+void stackTree1(Tree* root) {
+	if (root == NULL) {
+		return;
+	}
+	stack<Tree*> st;
+	st.push(root);
+	while (!st.empty()) {
+		Tree* newNode = st.top();
+		st.pop();
+		cout << newNode->val << " ";//可以是其他操作
+		//先序先进右孩子
+			if (newNode->right) {
+				st.push(newNode->right);
+			}
+			if (newNode->left) {
+				st.push(newNode->left);
+			}
+	}
+}
+
+
+
+//中序遍历
+void stackTree2(Tree* root) {
+	if (root == NULL) {
+		return;
+	}
+	stack<Tree*> st;
+	while (!st.empty() || root) {
+		if (root != NULL) {
+			st.push(root);
+			root = root->left;
+		}
+		else {
+			root = st.top();
+			st.pop();
+			cout << root->val << " ";
+			root = root->right;
+		}
+	}
+}
+
+
+//后序遍历
+void stackTree3(Tree* root) {
+	if (root == NULL) {
+		return;
+	}
+	stack<Tree*> st1;
+	stack<Tree*> st2;//辅助栈
+	st1.push(root);
+	while (!st1.empty()) {
+		Tree* head = st1.top();
+		st1.pop();
+		st2.push(head);
+		if (head->left) {
+			st1.push(head->left);
+		}
+		if (head->right) {
+			st1.push(head->right);
+		}
+	}
+	while (!st2.empty()) {
+		cout << st2.top() << " ";
+		st2.pop();
+	}
+}
+
+
+
+//宽度优先遍历即层次遍历
+void queueTree1(Tree* root) {
+	if (root == NULL) {
+		return;
+	}
+	queue<Tree*> qu;
+	qu.push(root);
+	while (!qu.empty()) {
+		Tree* head = qu.front();
+		qu.pop();
+		cout << head->val << " ";
+		if (head->left) {//先左再右
+			qu.push(head->left);
+		}
+		if (head->right) {
+			qu.push(head->right);
+		}
+	}
+}
+
+
+//寻找最大宽度
+int queueTree2(Tree* root) {
+	if (root == NULL) {
+		return;
+	}
+	queue<Tree*> qu;
+	qu.push(root);
+	unordered_map<Tree*, int> mp;//创建一个哈希表来记录当前节点在第几层
+	mp.emplace(root, 1);
+	int fool = 1;//当前在那一层
+	int dot = 0;//当前层发现了几个节点
+	int maxn = INT_MAX;//记录最大宽度
+	while (!qu.empty()) {
+		Tree* head = qu.front();
+		qu.pop();
+		int nowfool = mp[head];//记录现在在第几层
+		if (nowfool == fool) {
+			dot++;
+		}
+		else {
+			maxn = max(maxn, dot);
+			fool++;
+			dot = 1;
+		}
+		if (head->left) {//先左再右
+			mp.emplace(head->left, nowfool + 1);
+			qu.push(head->left);
+		}
+		if (head->right) {
+			mp.emplace(head->right, nowfool + 1);
+			qu.push(head->right);
+		}
+	}
+	return maxn;
+}
