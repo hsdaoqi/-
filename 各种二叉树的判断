@@ -131,3 +131,94 @@ ReturnType2 process2(Tree* root) {
 	int node = leftData.nodes + rightData.nodes + 1;
 	return { heigh,node };
 }
+
+
+
+
+//给你二叉树的两个节点o1,o2请返回他们的最低公共祖先
+TreeNode* lowAncestor(TreeNode* Node,TreeNode* o1, TreeNode* o2) {
+    if (Node == NULL || Node == o1 || Node == o2) {
+        return Node;
+    }
+   TreeNode* left = lowAncestor(Node->left, o1, o2);
+   TreeNode* right = lowAncestor(Node->right, o1, o2);
+   if (left != NULL && right != NULL) {
+       return Node;
+   }
+   return left != NULL ? left : right;
+}
+
+
+//给你一个节点找到它的后继节点，即在中序遍历后他的后一个节点
+
+struct TreeNode1 {
+    int val;
+    TreeNode1* right;
+    TreeNode1* left;
+    TreeNode1* parent;
+};
+TreeNode1* seekAfter(TreeNode1* Node) {
+    if (Node == NULL) {
+        return NULL;
+    }
+    if (Node->right != NULL) {//如果此节点有右孩子，那么他右孩子的最左节点就是它的后继
+        return leftmost(Node->right);
+    }
+    else {
+        TreeNode1* parent = Node->parent;
+        while (parent != NULL && parent->left != Node) {//父节点存在并且该节点为父节点的右孩子
+            Node = parent;
+            parent = Node->parent;
+        }
+        return parent;
+    }
+}
+
+TreeNode1* leftmost(TreeNode1* Node) {
+    if (Node == NULL) {
+        return NULL;
+    }
+    while (Node->left != NULL) {
+        Node = Node->left;
+    }
+    return Node;
+}
+
+
+
+
+
+//以先序方式二叉树的序列化和反序列话，其他方式一样
+//先将二叉树序列化即将二叉树的植转成字符串
+string ans;
+void trans(TreeNode* Node) {
+    if (Node == NULL) {
+        return;
+    }
+    ans += Node->val;
+    trans(Node->left);
+    trans(Node->right);
+}
+
+//反序列化
+TreeNode* reback(string ans) {
+    queue<char> qu;
+    for (int i = 0;i < ans.size();i++) {
+        qu.push(ans[i]);
+    }
+    return setTree(qu);
+}
+TreeNode* setTree(queue<char> &qu) {
+    if (qu.size() == 0) {
+        return;
+    }
+    char s = qu.front();
+    qu.pop();
+    if (s == '#') {
+        return NULL;
+    }
+    TreeNode* Node = new TreeNode{ s };
+    Node->left = setTree(qu);
+    Node->right = setTree(qu);
+    return Node;
+}
