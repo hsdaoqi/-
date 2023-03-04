@@ -1,0 +1,75 @@
+//并查集的对象
+typedef int N;
+class Node {
+public:
+	N value;
+	Node(N v) {
+		value = v;
+	}
+};
+
+class SetUnion {//初始化并查集
+public:
+	unordered_map<N, Node*> nodes;//元素和它对应的对象
+	unordered_map<Node*, Node*> parents;//它指向谁
+	unordered_map<Node*, int> Sizemap;//代表元素的大小
+	SetUnion(list<N> values) {
+		for (N cur : values) {
+			Node* node = new Node{ cur };
+			nodes.emplace(cur, node);
+			parents.emplace(node, node);
+			Sizemap.emplace(node, 1);
+		}
+	}
+};
+
+
+
+
+Node* SeekFather(Node* cur, SetUnion s) {
+	queue<Node*> qu;
+	while (cur != s.parents[cur]) {
+		qu.push(cur);
+		cur = s.parents[cur];
+	}
+	//cur为头节点
+	while (!qu.empty()) {
+		s.parents[qu.front()] = cur;
+		qu.pop();
+	}
+	return cur;
+}
+
+
+
+
+
+bool IsSameSet(N a,N b, SetUnion s) {
+	if (!count(s.nodes.begin(), s.nodes.end(), a) || !count(s.nodes.begin(), s.nodes.end(), b)) {
+		return false;
+	}
+	return SeekFather(s.nodes[a], s) == SeekFather(s.nodes[b], s);
+}
+
+
+void Union(N a, N b, SetUnion s) {
+	if (!count(s.nodes.begin(), s.nodes.end(), a) || !count(s.nodes.begin(), s.nodes.end(), b)) {
+		return;
+	}
+	Node* ahead = SeekFather(s.nodes[a], s);
+	Node* bhead = SeekFather(s.nodes[b], s);
+	if (ahead != bhead) {
+		int Sizeahead = s.Sizemap[ahead];
+		int Sizebhead = s.Sizemap[bhead];
+		if (Sizeahead >= Sizebhead) {
+			s.parents[bhead] = ahead;
+			s.Sizemap[ahead] = Sizeahead + Sizebhead;
+			s.Sizemap.erase(bhead);
+		}
+		else {
+			s.parents[ahead] = bhead;
+			s.Sizemap[bhead] = Sizeahead + Sizebhead;
+			s.Sizemap.erase(ahead);
+		}
+	}
+}
