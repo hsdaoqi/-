@@ -1,0 +1,129 @@
+//图的其中一种建立方式
+//点
+class Node {
+public:
+	int val;
+	int in;//几个点通向它
+	int out;//它通向几个点
+	vector<Node*> next;//他通向的点
+	vector<Node*> edge;//它联通的边
+
+	Node(int val) {
+		this->val = val;
+		this->in = 0;
+		this->out = 0;
+	}
+};
+//边
+class Edge {
+public:
+	int weigh;
+	Node* from;
+	Node* to;
+	Edge(int weigh, Node* from, Node* to) {
+		this->weigh = weigh;
+		this->from = from;
+		this->to = to;
+	}
+};
+//图
+class Graph {
+public:
+	unordered_map<int, Node*> nodes;
+	set<Edge*> edges;
+};
+
+
+
+
+
+
+//从Node出发进行宽度优先遍历
+void bfs(Node* node) {
+	if (node == NULL) {
+		return;
+	}
+	queue<Node*> qu;
+	unordered_set<Node*> se;
+	qu.push(node);
+	se.insert(node);
+	while (!qu.empty()) {
+		Node* cur = qu.front();
+		qu.pop();
+		cout << cur->val << " ";
+		for (Node* pos : cur->next) {
+			if (se.find(pos) != se.end()) {
+				qu.push(pos);
+				se.insert(pos);
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+//从Node出发进行深度优先遍历
+void dfs(Node* node) {
+	if (node == NULL) {
+		return;
+	}
+	stack<Node*> st;
+	unordered_set<Node*> se;
+	st.push(node);
+	se.insert(node);
+	cout << st.top()->val << " ";
+	while (!st.empty()) {
+		Node* cur = st.top();
+		st.pop();
+		for (Node* pos : cur->next) {
+			if (!se.count(node)) {
+				st.push(cur);
+				st.push(pos);
+				se.insert(pos);
+				cout << pos->val << " ";
+				break;
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+//拓扑排序  得是有向无环图
+list<Node*> sorted(Graph* graph) {
+	//key某一个点
+	//value剩余的入度
+	unordered_map<Node*, int> inmap;
+	queue<Node*> qu;//只有入度为零的点才可进这个队列
+	for (auto node : graph->nodes) {
+		inmap.emplace(node.second,node.second->in);
+		if (node.second->in == 0) {
+			qu.push(node.second);
+		}
+	}
+
+	//拓扑排序的结依次加入result
+	list<Node*> result;
+	while (!qu.empty()) {
+		Node* cur = qu.front();
+		qu.pop();
+		result.push_back(cur);
+		for (Node* next : cur->next) {
+			inmap.emplace(next, inmap[next] - 1);
+			if (inmap[next] == 0) {
+				qu.push(next);
+			}
+		}
+	}
+	return result;
+
+}
