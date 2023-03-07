@@ -12,3 +12,39 @@ int main() {
 	process(4, "left", "right", "mid");
 	return 0;
 }
+
+
+
+
+//栈的逆序
+
+int f(stack<int> &st) {
+	int result = st.top();
+	st.pop();
+	if (st.empty()) {
+		return result;
+	}
+	else {
+		int last = f(st);
+		st.emplace(result);
+		return last;
+	}
+}
+void MyReverse(stack<int> &st) {
+	if (st.empty()) {
+		return;
+	}
+	int ss = f(st);
+	MyReverse(st);
+	st.emplace(ss);
+}
+
+int main() {
+	stack<int> st;
+	st.emplace(1);
+	st.emplace(2);
+	st.emplace(3);
+	st.emplace(4);
+	 MyReverse(st);
+	return 0;
+}
