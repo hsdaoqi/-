@@ -1,0 +1,14 @@
+//汉诺塔问题
+void process(int n, string from, string to, string other) {
+	if (n == 1) {
+		cout << "move 1 from " << from << " to " << to<< endl;
+		return;
+	}
+	process(n - 1, from, other, to);
+	cout << "move "<<n<<" from " << from << " to " << to<< endl;
+	process(n - 1, other, to, from);
+}
+int main() {
+	process(4, "left", "right", "mid");
+	return 0;
+}
