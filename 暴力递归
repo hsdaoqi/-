@@ -73,3 +73,38 @@ public:
        return ans;
     }
 };
+
+
+
+
+
+
+
+//找到所有全排列
+void process(vector<int> ans, int index,vector<vector<int>> &res) {
+	if (ans.size() == index) {
+		res.push_back(ans);
+		return;
+	}
+	for (int i = index;i < ans.size();i++) {
+		swap(ans[index], ans[i]);
+		process(ans, index + 1, res);
+		swap(ans[index], ans[i]);
+	}
+}
+
+int main() {
+	vector<int> ans;
+	ans.push_back(1);
+	ans.push_back(2);
+	ans.push_back(3);
+	ans.push_back(4);
+	vector<vector<int>> res;
+	process(ans, 0, res);
+	for (int i = 0;i < res.size();i++) {
+		for (int j = 0;j < res[i].size();j++) {
+			cout << res[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
