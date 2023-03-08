@@ -108,3 +108,25 @@ int main() {
 		cout << endl;
 	}
 }
+
+
+
+
+//以递归的方式解决零一背包
+//w[]物体重量，v[]价值,prevw已经装了的数量，bag背包的总容量
+int dfs(vector<int> w, vector<int> v, int index, int prevw, int bag) {
+	if (prevw > bag) {
+		return -1;//不存在此方案
+	}
+	if (index == w.size()) {
+		return 0;
+	}
+
+	int p1 = dfs(w, v, index + 1, prevw, bag);
+	int p2next= dfs(w, v, index + 1, prevw+w[index], bag);
+	int p2 = -1;
+	if (p2next != -1) {
+		p2 = p2next + v[index];
+	}
+	return max(p1, p2);
+}
