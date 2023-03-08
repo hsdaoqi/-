@@ -48,3 +48,28 @@ int main() {
 	 MyReverse(st);
 	return 0;
 }
+
+
+
+
+//找到所有子序列
+class Solution {
+    vector<vector<int>> ans;
+    vector<int> tmp;
+public:
+   void process(vector<int>& nums,int n){
+       if(n==nums.size()){
+          ans.push_back(tmp);
+          return;
+       }
+       tmp.push_back(nums[n]);
+       process(nums,n+1);
+       tmp.pop_back();
+       process(nums,n+1);
+   }
+    vector<vector<int>> subsets(vector<int>& nums) {
+       process(nums,0);
+       reverse(ans.begin(),ans.end());
+       return ans;
+    }
+};
