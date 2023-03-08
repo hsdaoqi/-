@@ -1,0 +1,23 @@
+//范围模型
+//A与B进行博弈，在桌上的一排牌，A先手拿，B后手拿，只能从左右拿
+//请问谁会赢
+int win(vector<int> ans) {
+	if (ans.size() == 0) {
+		return 0;
+	}
+	return max(f(ans, 0, ans.size() - 1), s(ans, 0, ans.size() - 1));
+}
+
+int f(vector<int> ans, int L, int R) {//先手拿在L到R上最大的
+	if (L == R) {
+		return ans[L];
+	}
+	return max(ans[L] + s(ans, L + 1, R), ans[R] + s(ans, L, R - 1));
+}
+
+int s(vector<int> ans, int L, int R) {//后手拿在L到R上最大的
+	if (L == R) {
+		return 0;
+	}
+	return min(f(ans, L+1, R), f(ans, L, R-1));
+}
