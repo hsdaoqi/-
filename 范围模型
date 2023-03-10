@@ -47,3 +47,30 @@ bool isValid(vector<int> ans, int i, int j) {
 	}
 	return true;
 }
+
+
+
+
+
+
+//递归解决01背包问题
+int maxvalue(vector<int> w, vector<int> v, int bag) {
+	return process(w, v, 0, bag);
+}
+
+int process(vector<int> w, vector<int> v, int index, int rest) {
+	if (rest < 0) {
+		return -1;
+	}
+	if (index == w.size()) {
+		return 0;
+	}
+	//有货也有空间
+	int p1 = process(w, v, index + 1, rest);
+	int p2 = -1;
+	int p2next = process(w, v, index + 1, rest - w[index]);
+	if (p2next != -1) {
+		p2 = p2next + v[index];
+	}
+	return max(p1, p2);
+}
