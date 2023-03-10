@@ -21,3 +21,29 @@ int s(vector<int> ans, int L, int R) {//后手拿在L到R上最大的
 	}
 	return min(f(ans, L+1, R), f(ans, L, R-1));
 }
+
+
+
+//n*n,N皇后问题
+int process(int i, vector<int> ans, int n) {
+	if (i == n) {
+		return 1;
+	}
+	int res = 0;
+	for (int j = 0;j < n;j++) {
+		if (isValid(ans, i, j)) {
+			ans[i] = j;
+			res += process(i + 1, ans, n);
+		}
+	}
+	return res;
+}
+
+bool isValid(vector<int> ans, int i, int j) {
+	for (int k = 0;k < i;k++) {
+		if (j == ans[k] || abs(ans[k] - j) == abs(i - k)) {
+			return false;
+		}
+	}
+	return true;
+}
